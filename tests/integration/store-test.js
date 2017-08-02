@@ -207,7 +207,7 @@ test("destroying the store correctly cleans everything up", function(assert) {
 });
 
 function ajaxResponse(value) {
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     env.adapter._makeRequest = function() {
       return run(Ember.RSVP, 'resolve', Ember.copy(value, true));
     };

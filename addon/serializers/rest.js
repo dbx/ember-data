@@ -430,7 +430,7 @@ const RESTSerializer = JSONSerializer.extend({
       });
     }
 
-    if (isEnabled('ds-pushpayload-return')) {
+    if (true) {
       return store.push(documentHash);
     } else {
       store.push(documentHash);

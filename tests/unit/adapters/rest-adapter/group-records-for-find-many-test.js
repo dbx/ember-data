@@ -25,7 +25,7 @@ module('unit/adapters/rest_adapter/group_records_for_find_many_test - DS.RESTAda
       }
     });
 
-    if (isEnabled('ds-improved-ajax')) {
+    if (true) {
       GroupsAdapter.reopen({
         _makeRequest(request) {
           requests.push({

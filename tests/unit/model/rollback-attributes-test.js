@@ -220,7 +220,7 @@ test(`invalid new record's attributes can be rollbacked`, function(assert) {
   ]);
 
   let adapter;
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter = DS.RESTAdapter.extend({
       _makeRequest() {
         return Ember.RSVP.reject(error);
@@ -257,7 +257,7 @@ test(`invalid new record's attributes can be rollbacked`, function(assert) {
 test(`invalid record's attributes can be rollbacked after multiple failed calls - #3677`, function(assert) {
 
   let adapter;
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter = DS.RESTAdapter.extend({
       _makeRequest() {
         let error = new DS.InvalidError();
@@ -348,7 +348,7 @@ test("invalid record's attributes can be rollbacked", function(assert) {
   ]);
 
   let adapter;
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter = DS.RESTAdapter.extend({
       _makeRequest() {
         return Ember.RSVP.reject(error);
@@ -421,7 +421,7 @@ test(`invalid record's attributes rolled back to correct state after set`, funct
   ]);
 
   let adapter;
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter = DS.RESTAdapter.extend({
       _makeRequest() {
         return Ember.RSVP.reject(error);
@@ -494,7 +494,7 @@ test(`when destroying a record setup the record state to invalid, the record's a
   ]);
 
   let adapter;
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter = DS.RESTAdapter.extend({
       _makeRequest() {
         return Ember.RSVP.reject(error);

@@ -244,7 +244,7 @@ const JSONAPISerializer = JSONSerializer.extend({
   */
   pushPayload(store, payload) {
     let normalizedPayload = this._normalizeDocumentHelper(payload);
-    if (isEnabled('ds-pushpayload-return')) {
+    if (true) {
       return store.push(normalizedPayload);
     } else {
       store.push(normalizedPayload);

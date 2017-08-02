@@ -41,7 +41,7 @@ module("integration/adapter/build-url-mixin - BuildURLMixin with RESTAdapter", {
 });
 
 function ajaxResponse(value) {
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter._makeRequest = function(request) {
       passedUrl = request.url;
 

@@ -91,7 +91,7 @@ function ajaxResponse(responses) {
   passedVerb = [];
   passedHash = [];
 
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter._makeRequest = function(request) {
       index = counter++;
 

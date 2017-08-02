@@ -31,7 +31,7 @@ test('When an id is searched, the correct url should be generated', function(ass
 
   let count = 0;
 
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter._makeRequest = function(request) {
       if (count === 0) { assert.equal(request.url, '/people/1', 'should create the correct url'); }
       if (count === 1) { assert.equal(request.url, '/places/1', 'should create the correct url'); }
@@ -58,7 +58,7 @@ test('When an id is searched, the correct url should be generated', function(ass
 test(`id's should be sanatized`, function(assert) {
   assert.expect(1);
 
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter._makeRequest = function(request) {
       assert.equal(request.url, '/people/..%2Fplace%2F1', `should create the correct url`);
       return Ember.RSVP.resolve();

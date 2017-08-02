@@ -742,7 +742,7 @@ testInDebug('Calling push with unknown keys should not warn by default', functio
   }, /The payload for 'person' contains these unknown .*: .* Make sure they've been defined in your model./);
 });
 
-if (isEnabled('ds-pushpayload-return')) {
+if (true) {
   test("Calling pushPayload returns records", function(assert) {
     env.registry.register('serializer:person', DS.RESTSerializer);
 

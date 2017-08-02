@@ -41,7 +41,7 @@ module("integration/adapter/rest_adapter - REST Adapter", {
 });
 
 function ajaxResponse(value) {
-  if (isEnabled('ds-improved-ajax')) {
+  if (true) {
     adapter._makeRequest = function(request) {
       passedUrl = request.url;
       passedVerb = request.method;
@@ -2692,7 +2692,7 @@ testInDebug("warns when an empty response is returned, though a valid stringifie
 });
 
 
-if (isEnabled('ds-improved-ajax')) {
+if (true) {
   testInDebug("The RESTAdapter should use `ajax` with a deprecation message when it is overridden by the user.", function(assert) {
     assert.expect(2)
 

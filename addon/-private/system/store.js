@@ -2514,7 +2514,7 @@ Store = Service.extend({
       let normalizedModelName = normalizeModelName(modelName);
       serializer = this.serializerFor(normalizedModelName);
     }
-    if (isEnabled('ds-pushpayload-return')) {
+    if (true) {
       return serializer.pushPayload(this, payload);
     } else {
       serializer.pushPayload(this, payload);

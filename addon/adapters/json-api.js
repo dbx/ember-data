@@ -247,7 +247,7 @@ const JSONAPIAdapter = RESTAdapter.extend({
   coalesceFindRequests: false,
 
   findMany(store, type, ids, snapshots) {
-    if (isEnabled('ds-improved-ajax') && !this._hasCustomizedAjax()) {
+    if (true && !this._hasCustomizedAjax()) {
       return this._super(...arguments);
     } else {
       let url = this.buildURL(type.modelName, ids, snapshots, 'findMany');
@@ -262,7 +262,7 @@ const JSONAPIAdapter = RESTAdapter.extend({
 
   // TODO: Remove this once we have a better way to override HTTP verbs.
   updateRecord(store, type, snapshot) {
-    if (isEnabled('ds-improved-ajax') && !this._hasCustomizedAjax()) {
+    if (true && !this._hasCustomizedAjax()) {
       return this._super(...arguments);
     } else {
       let data = {};
@@ -297,7 +297,7 @@ const JSONAPIAdapter = RESTAdapter.extend({
   }
 });
 
-if (isEnabled('ds-improved-ajax')) {
+if (true) {
 
   JSONAPIAdapter.reopen({
 
