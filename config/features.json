@@ -3,9 +3,9 @@
   "ds-pushpayload-return": true,
   "ds-extended-errors": true,
   "ds-overhaul-references": null,
-  "ds-payload-type-hooks": null,
+  "ds-payload-type-hooks": true,
   "ds-check-should-serialize-relationships": true,
   "ds-rollback-attribute": null,
-  "ds-serialize-id": null,
+  "ds-serialize-id": true,
   "ds-deprecate-store-serialize": true
 }
