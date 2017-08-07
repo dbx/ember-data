@@ -467,7 +467,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   findRecord(store, type, id, snapshot) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, id, snapshot,
         requestType: 'findRecord'
@@ -499,7 +499,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
   findAll(store, type, sinceToken, snapshotRecordArray) {
     let query = this.buildQuery(snapshotRecordArray);
 
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, sinceToken, query,
         snapshots: snapshotRecordArray,
@@ -536,7 +536,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   query(store, type, query) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, query,
         requestType: 'query'
@@ -573,7 +573,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   queryRecord(store, type, query) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, query,
         requestType: 'queryRecord'
@@ -625,7 +625,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   findMany(store, type, ids, snapshots) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, ids, snapshots,
         requestType: 'findMany'
@@ -675,7 +675,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   findHasMany(store, snapshot, url, relationship) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, snapshot, url, relationship,
         requestType: 'findHasMany'
@@ -728,7 +728,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   findBelongsTo(store, snapshot, url, relationship) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, snapshot, url, relationship,
         requestType: 'findBelongsTo'
@@ -761,7 +761,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   createRecord(store, type, snapshot) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, snapshot,
         requestType: 'createRecord'
@@ -796,7 +796,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   updateRecord(store, type, snapshot) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, snapshot,
         requestType: 'updateRecord'
@@ -828,7 +828,7 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
     @return {Promise} promise
   */
   deleteRecord(store, type, snapshot) {
-    if (true && !this._hasCustomizedAjax()) {
+    if (!this._hasCustomizedAjax()) {
       let request = this._requestFor({
         store, type, snapshot,
         requestType: 'deleteRecord'
@@ -1236,250 +1236,247 @@ const RESTAdapter = Adapter.extend(BuildURLMixin, {
   }
 });
 
-if (true) {
+RESTAdapter.reopen({
 
-  RESTAdapter.reopen({
+  /**
+   * Get the data (body or query params) for a request.
+   *
+   * @public
+   * @method dataForRequest
+   * @param {Object} params
+   * @return {Object} data
+   */
+  dataForRequest(params) {
+    let { store, type, snapshot, requestType, query } = params;
 
-    /**
-     * Get the data (body or query params) for a request.
-     *
-     * @public
-     * @method dataForRequest
-     * @param {Object} params
-     * @return {Object} data
-     */
-    dataForRequest(params) {
-      let { store, type, snapshot, requestType, query } = params;
+    // type is not passed to findBelongsTo and findHasMany
+    type = type || (snapshot && snapshot.type);
 
-      // type is not passed to findBelongsTo and findHasMany
-      type = type || (snapshot && snapshot.type);
+    let serializer = store.serializerFor(type.modelName);
+    let data = {};
 
-      let serializer = store.serializerFor(type.modelName);
-      let data = {};
+    switch (requestType) {
+      case 'createRecord':
+        serializer.serializeIntoHash(data, type, snapshot, { includeId: true });
+        break;
 
-      switch (requestType) {
-        case 'createRecord':
-          serializer.serializeIntoHash(data, type, snapshot, { includeId: true });
-          break;
+      case 'updateRecord':
+        serializer.serializeIntoHash(data, type, snapshot);
+        break;
 
-        case 'updateRecord':
-          serializer.serializeIntoHash(data, type, snapshot);
-          break;
+      case 'findRecord':
+        data = this.buildQuery(snapshot);
+        break;
 
-        case 'findRecord':
-          data = this.buildQuery(snapshot);
-          break;
-
-        case 'findAll':
-          if (params.sinceToken) {
-            query = query || {};
-            query.since = params.sinceToken;
-          }
-          data = query;
-          break;
-
-        case 'query':
-        case 'queryRecord':
-          if (this.sortQueryParams) {
-            query = this.sortQueryParams(query);
-          }
-          data = query;
-          break;
-
-        case 'findMany':
-          data = { ids: params.ids };
-          break;
-
-        default:
-          data = undefined;
-          break;
-      }
-
-      return data;
-    },
-
-    /**
-     * Get the HTTP method for a request.
-     *
-     * @public
-     * @method methodForRequest
-     * @param {Object} params
-     * @return {String} HTTP method
-     */
-    methodForRequest(params) {
-      let { requestType } = params;
-
-      switch (requestType) {
-        case 'createRecord': return 'POST';
-        case 'updateRecord': return 'PUT';
-        case 'deleteRecord': return 'DELETE';
-      }
-
-      return 'GET';
-    },
-
-    /**
-     * Get the URL for a request.
-     *
-     * @public
-     * @method urlForRequest
-     * @param {Object} params
-     * @return {String} URL
-     */
-    urlForRequest(params) {
-      let { type, id, ids, snapshot, snapshots, requestType, query } = params;
-
-      // type and id are not passed from updateRecord and deleteRecord, hence they
-      // are defined if not set
-      type = type || (snapshot && snapshot.type);
-      id = id || (snapshot && snapshot.id);
-
-      switch (requestType) {
-        case 'findAll':
-          return this.buildURL(type.modelName, null, snapshots, requestType);
-
-        case 'query':
-        case 'queryRecord':
-          return this.buildURL(type.modelName, null, null, requestType, query);
-
-        case 'findMany':
-          return this.buildURL(type.modelName, ids, snapshots, requestType);
-
-        case 'findHasMany':
-        case 'findBelongsTo': {
-          let url = this.buildURL(type.modelName, id, snapshot, requestType);
-          return this.urlPrefix(params.url, url);
+      case 'findAll':
+        if (params.sinceToken) {
+          query = query || {};
+          query.since = params.sinceToken;
         }
-      }
+        data = query;
+        break;
 
-      return this.buildURL(type.modelName, id, snapshot, requestType, query);
-    },
-
-    /**
-     * Get the headers for a request.
-     *
-     * By default the value of the `headers` property of the adapter is
-     * returned.
-     *
-     * @public
-     * @method headersForRequest
-     * @param {Object} params
-     * @return {Object} headers
-     */
-    headersForRequest(params) {
-      return this.get('headers');
-    },
-
-    /**
-     * Get an object which contains all properties for a request which should
-     * be made.
-     *
-     * @private
-     * @method _requestFor
-     * @param {Object} params
-     * @return {Object} request object
-     */
-    _requestFor(params) {
-      let method = this.methodForRequest(params);
-      let url = this.urlForRequest(params);
-      let headers = this.headersForRequest(params);
-      let data = this.dataForRequest(params);
-
-      return { method, url, headers, data };
-    },
-
-    /**
-     * Convert a request object into a hash which can be passed to `jQuery.ajax`.
-     *
-     * @private
-     * @method _requestToJQueryAjaxHash
-     * @param {Object} request
-     * @return {Object} jQuery ajax hash
-     */
-    _requestToJQueryAjaxHash(request) {
-      let hash = {};
-
-      hash.type = request.method;
-      hash.url = request.url;
-      hash.dataType = 'json';
-      hash.context = this;
-
-      if (request.data) {
-        if (request.method !== 'GET') {
-          hash.contentType = 'application/json; charset=utf-8';
-          hash.data = JSON.stringify(request.data);
-        } else {
-          hash.data = request.data;
+      case 'query':
+      case 'queryRecord':
+        if (this.sortQueryParams) {
+          query = this.sortQueryParams(query);
         }
-      }
+        data = query;
+        break;
 
-      let headers = request.headers;
-      if (headers !== undefined) {
-        hash.beforeSend = function(xhr) {
-          Object.keys(headers).forEach((key) => xhr.setRequestHeader(key, headers[key]));
-        };
-      }
+      case 'findMany':
+        data = { ids: params.ids };
+        break;
 
-      return hash;
-    },
-
-    /**
-     * Make a request using `jQuery.ajax`.
-     *
-     * @private
-     * @method _makeRequest
-     * @param {Object} request
-     * @return {Promise} promise
-     */
-    _makeRequest(request) {
-      let token = heimdall.start('adapter._makeRequest');
-      let adapter = this;
-      let hash = this._requestToJQueryAjaxHash(request);
-
-      let { method, url } = request;
-      let requestData = { method, url };
-
-      return new Ember.RSVP.Promise((resolve, reject) => {
-
-        hash.success = function(payload, textStatus, jqXHR) {
-          heimdall.stop(token);
-          let response = ajaxSuccess(adapter, jqXHR, payload, requestData);
-          Ember.run.join(null, resolve, response);
-        };
-
-        hash.error = function(jqXHR, textStatus, errorThrown) {
-          heimdall.stop(token);
-          let responseData = {
-            textStatus,
-            errorThrown
-          };
-          let error = ajaxError(adapter, jqXHR, requestData, responseData);
-          Ember.run.join(null, reject, error);
-        };
-
-        instrument(function() {
-          hash.converters = {
-            'text json': function(payload) {
-              let token = heimdall.start('json.parse');
-              let json;
-              try {
-                json = Ember.$.parseJSON(payload);
-              } catch (e) {
-                json = payload;
-              }
-              heimdall.stop(token);
-              return json;
-            }
-          };
-        });
-
-        adapter._ajaxRequest(hash);
-
-      }, `DS: RESTAdapter#makeRequest: ${method} ${url}`);
+      default:
+        data = undefined;
+        break;
     }
-  });
 
-}
+    return data;
+  },
+
+  /**
+   * Get the HTTP method for a request.
+   *
+   * @public
+   * @method methodForRequest
+   * @param {Object} params
+   * @return {String} HTTP method
+   */
+  methodForRequest(params) {
+    let { requestType } = params;
+
+    switch (requestType) {
+      case 'createRecord': return 'POST';
+      case 'updateRecord': return 'PUT';
+      case 'deleteRecord': return 'DELETE';
+    }
+
+    return 'GET';
+  },
+
+  /**
+   * Get the URL for a request.
+   *
+   * @public
+   * @method urlForRequest
+   * @param {Object} params
+   * @return {String} URL
+   */
+  urlForRequest(params) {
+    let { type, id, ids, snapshot, snapshots, requestType, query } = params;
+
+    // type and id are not passed from updateRecord and deleteRecord, hence they
+    // are defined if not set
+    type = type || (snapshot && snapshot.type);
+    id = id || (snapshot && snapshot.id);
+
+    switch (requestType) {
+      case 'findAll':
+        return this.buildURL(type.modelName, null, snapshots, requestType);
+
+      case 'query':
+      case 'queryRecord':
+        return this.buildURL(type.modelName, null, null, requestType, query);
+
+      case 'findMany':
+        return this.buildURL(type.modelName, ids, snapshots, requestType);
+
+      case 'findHasMany':
+      case 'findBelongsTo': {
+        let url = this.buildURL(type.modelName, id, snapshot, requestType);
+        return this.urlPrefix(params.url, url);
+      }
+    }
+
+    return this.buildURL(type.modelName, id, snapshot, requestType, query);
+  },
+
+  /**
+   * Get the headers for a request.
+   *
+   * By default the value of the `headers` property of the adapter is
+   * returned.
+   *
+   * @public
+   * @method headersForRequest
+   * @param {Object} params
+   * @return {Object} headers
+   */
+  headersForRequest(params) {
+    return this.get('headers');
+  },
+
+  /**
+   * Get an object which contains all properties for a request which should
+   * be made.
+   *
+   * @private
+   * @method _requestFor
+   * @param {Object} params
+   * @return {Object} request object
+   */
+  _requestFor(params) {
+    let method = this.methodForRequest(params);
+    let url = this.urlForRequest(params);
+    let headers = this.headersForRequest(params);
+    let data = this.dataForRequest(params);
+
+    return { method, url, headers, data };
+  },
+
+  /**
+   * Convert a request object into a hash which can be passed to `jQuery.ajax`.
+   *
+   * @private
+   * @method _requestToJQueryAjaxHash
+   * @param {Object} request
+   * @return {Object} jQuery ajax hash
+   */
+  _requestToJQueryAjaxHash(request) {
+    let hash = {};
+
+    hash.type = request.method;
+    hash.url = request.url;
+    hash.dataType = 'json';
+    hash.context = this;
+
+    if (request.data) {
+      if (request.method !== 'GET') {
+        hash.contentType = 'application/json; charset=utf-8';
+        hash.data = JSON.stringify(request.data);
+      } else {
+        hash.data = request.data;
+      }
+    }
+
+    let headers = request.headers;
+    if (headers !== undefined) {
+      hash.beforeSend = function(xhr) {
+        Object.keys(headers).forEach((key) => xhr.setRequestHeader(key, headers[key]));
+      };
+    }
+
+    return hash;
+  },
+
+  /**
+   * Make a request using `jQuery.ajax`.
+   *
+   * @private
+   * @method _makeRequest
+   * @param {Object} request
+   * @return {Promise} promise
+   */
+  _makeRequest(request) {
+    let token = heimdall.start('adapter._makeRequest');
+    let adapter = this;
+    let hash = this._requestToJQueryAjaxHash(request);
+
+    let { method, url } = request;
+    let requestData = { method, url };
+
+    return new Ember.RSVP.Promise((resolve, reject) => {
+
+      hash.success = function(payload, textStatus, jqXHR) {
+        heimdall.stop(token);
+        let response = ajaxSuccess(adapter, jqXHR, payload, requestData);
+        Ember.run.join(null, resolve, response);
+      };
+
+      hash.error = function(jqXHR, textStatus, errorThrown) {
+        heimdall.stop(token);
+        let responseData = {
+          textStatus,
+          errorThrown
+        };
+        let error = ajaxError(adapter, jqXHR, requestData, responseData);
+        Ember.run.join(null, reject, error);
+      };
+
+      instrument(function() {
+        hash.converters = {
+          'text json': function(payload) {
+            let token = heimdall.start('json.parse');
+            let json;
+            try {
+              json = Ember.$.parseJSON(payload);
+            } catch (e) {
+              json = payload;
+            }
+            heimdall.stop(token);
+            return json;
+          }
+        };
+      });
+
+      adapter._ajaxRequest(hash);
+
+    }, `DS: RESTAdapter#makeRequest: ${method} ${url}`);
+  }
+});
+
 
 function ajaxSuccess(adapter, jqXHR, payload, requestData) {
   let response;
