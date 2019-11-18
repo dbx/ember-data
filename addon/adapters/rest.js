@@ -1261,7 +1261,7 @@ RESTAdapter.reopen({
         break;
 
       case 'updateRecord':
-        serializer.serializeIntoHash(data, type, snapshot);
+        serializer.serializeIntoHash(data, type, snapshot, { includeId: true });
         break;
 
       case 'findRecord':
